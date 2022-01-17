@@ -1,35 +1,49 @@
 let search_button = document.querySelector('.search-button');
 let enter_click = document.querySelector('.title-input');
 
-search_button.addEventListener('click', searchMovie);
-enter_click.addEventListener('keypress', function(e) {
-    if (e.key==='Enter') searchMovie();
+search_button.addEventListener('click', findMovies);
+enter_click.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') findMovies();
 });
+document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('show-detail')) findMovieDetail(e.target);
+})
 
-function searchMovie() {
-    let input = document.querySelector('.title-input');
-    let movies = fetch('http://www.omdbapi.com/?apikey=dca61bcc&s=' + input.value)
+async function findMovies() {
+    let input_element = document.querySelector('.title-input');
+    let keyword = input_element.value;
+    let search_result = await fecthRequestMovies(keyword);
+    updateUI_searchResult(search_result);
+}
+
+async function findMovieDetail(element) {
+    let movie_detail = await fecthRequestDetail(element.dataset.id);
+    updateUI_movieDetail(movie_detail);
+}
+
+function fecthRequestMovies(keyword) {
+    return fetch('http://www.omdbapi.com/?apikey=dca61bcc&s=' + keyword)
         .then(response => response.json())
-        .then(response => {
-            let movies = response.Search;
-            let cards = "";
-            for (const movie of movies) cards += getMovies(movie);
-            let search_result = document.querySelector('.movies');
-            search_result.innerHTML = cards;
+        .then(response => response.Search);
+}
 
-            let show_detail = document.querySelectorAll('.show-detail');
-            for (each_detail of show_detail) {
-                each_detail.addEventListener('click', function () {
-                    fetch('http://www.omdbapi.com/?apikey=dca61bcc&i=' + this.dataset.id)
-                        .then(response => response.json())
-                        .then(response => {
-                            let detail_info = getMovieDetail(response);
-                            let detail_template = document.querySelector('.modal-content');
-                            detail_template.innerHTML = detail_info;
-                        });
-                });
-            }
-        });
+function fecthRequestDetail(movie_id) {
+    return fetch('http://www.omdbapi.com/?apikey=dca61bcc&i=' + movie_id)
+        .then(response => response.json())
+        .then(response => response);
+}
+
+function updateUI_searchResult(search_result) {
+    let cards = "";
+    for (const element of search_result) cards += getMovies(element);
+    let result_place = document.querySelector('.movies');
+    result_place.innerHTML = cards;
+}
+
+function updateUI_movieDetail(movie_detail) {
+    let detail_info = getMovieDetail(movie_detail);
+    let detail_template = document.querySelector('.modal-content');
+    detail_template.innerHTML = detail_info;
 }
 
 function getMovies(m) {
