@@ -1,5 +1,7 @@
 let search_button = document.querySelector('.search-button');
 let enter_click = document.querySelector('.title-input');
+let detailMovieContainer = document.querySelector('.modal-content');
+let result_container = document.querySelector('.movies');
 
 search_button.addEventListener('click', findMovies);
 enter_click.addEventListener('keypress', function (e) {
@@ -10,13 +12,21 @@ document.addEventListener('click', function (e) {
 })
 
 async function findMovies() {
-    let input_element = document.querySelector('.title-input');
-    let keyword = input_element.value;
-    let search_result = await fecthRequestMovies(keyword);
-    updateUI_searchResult(search_result);
+    addLoading(result_container)
+    try {
+        let input_element = document.querySelector('.title-input');
+        let keyword = input_element.value;
+        keywordValidation(keyword);
+        let search_result = await fecthRequestMovies(keyword);
+        updateUI_searchResult(search_result);
+    } catch (error) {
+        updateUI_error(error);
+    }
+
 }
 
 async function findMovieDetail(element) {
+    addLoading(detailMovieContainer);
     let movie_detail = await fecthRequestDetail(element.dataset.id);
     updateUI_movieDetail(movie_detail);
 }
@@ -24,7 +34,12 @@ async function findMovieDetail(element) {
 function fecthRequestMovies(keyword) {
     return fetch('http://www.omdbapi.com/?apikey=dca61bcc&s=' + keyword)
         .then(response => response.json())
-        .then(response => response.Search);
+        .then(response => {
+            if (response.Response === 'False') {
+                throw new Error(response.Error);
+            }
+            return response.Search;
+        });
 }
 
 function fecthRequestDetail(movie_id) {
@@ -36,49 +51,47 @@ function fecthRequestDetail(movie_id) {
 function updateUI_searchResult(search_result) {
     let cards = "";
     for (const element of search_result) cards += getMovies(element);
-    let result_place = document.querySelector('.movies');
-    result_place.innerHTML = cards;
+    result_container.innerHTML = cards;
 }
 
 function updateUI_movieDetail(movie_detail) {
     let detail_info = getMovieDetail(movie_detail);
-    let detail_template = document.querySelector('.modal-content');
-    detail_template.innerHTML = detail_info;
+    detailMovieContainer.innerHTML = detail_info;
 }
 
 function getMovies(m) {
     return `<div class="col-md-2 my-3">
-                <div class="card bg-warning text-dark">
+                <div class="card bg-primary" style="height: 25rem;">
                     <img src="${m.Poster}" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title" style="font-size: 0.8rem;">${m.Title}</h5>
-                            <h6 class="card-subtitle mb-2 text-danger" style="font-size: 0.8rem;">${m.Year}</h6>
-                            <a href="#" class="btn btn-primary show-detail" data-id="${m.imdbID}" data-bs-toggle="modal" data-bs-target="#moviesModal" style="font-size: 0.8rem;">Show Details</a>
-                        </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" style="font-size: 0.8rem;"><strong>${m.Title}</strong></h5>
+                        <h6 class="card-subtitle mb-2 text-info" style="font-size: 0.8rem;">${m.Year}</h6>
+                        <a href="#" class="btn btn-dark show-detail mt-auto" data-id="${m.imdbID}" data-bs-toggle="modal" data-bs-target="#moviesModal" style="font-size: 0.8rem;">Show Details</a>
+                    </div>
                 </div>
             </div>`;
 }
 
 function getMovieDetail(m) {
-    return `<div class="modal-header">
-                <h5 class="modal-title text-black" id="moviesModalLabel"><strong>${m.Title}</strong></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    return `<div class="modal-header bg-dark border-dark">
+                <h5 class="modal-title" id="moviesModalLabel"><strong>${m.Title}</strong></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-5">
-                        <img src="${m.Poster}" alt="poster not found" class="img-fluid">
+                        <img src="${m.Poster}" alt="poster not found" class="img-fluid text-black">
                     </div>
                     <div class="col-7">
                         <ul class="list-group">
-                            <li class="list-group-item"><strong>Year :</strong> ${m.Year}</li>
-                            <li class="list-group-item"><strong>Genre :</strong> ${m.Genre}</li>
-                            <li class="list-group-item"><strong>Director :</strong> ${m.Director}</li>
-                            <li class="list-group-item"><strong>Actors :</strong> ${m.Actors}</li>
-                            <li class="list-group-item"><strong>Language :</strong> ${m.Language}</li>
-                            <li class="list-group-item"><strong>Country :</strong> ${m.Country}</li>
-                            <li class="list-group-item"><strong>Rating :</strong> ${m.imdbRating}</li>
-                            <li class="list-group-item"><strong>Plot :</strong> <br>
+                            <li class="list-group-item list-group-item-dark"><strong>Year :</strong> ${m.Year}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Genre :</strong> ${m.Genre}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Director :</strong> ${m.Director}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Actors :</strong> ${m.Actors}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Language :</strong> ${m.Language}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Country :</strong> ${m.Country}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Rating :</strong> ${m.imdbRating}</li>
+                            <li class="list-group-item list-group-item-dark"><strong>Plot :</strong> <br>
                                 "${m.Plot}"
                             </li>
                         </ul>
@@ -86,3 +99,24 @@ function getMovieDetail(m) {
                 </div>
             </div>`;
 }
+
+function updateUI_error(error) {
+    let error_element = `<h3>${error}</h3>`
+    result_container.innerHTML = error_element;
+}
+
+function keywordValidation(keyword) {
+    if (!keyword) {
+        throw new Error('Please, input movie title!');
+        return;
+    }
+}
+
+function addLoading(element) {
+    element.innerHTML = `<div class="d-flex justify-content-center my-3">
+                            <div class="spinner-border text-light" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>`
+}
+
