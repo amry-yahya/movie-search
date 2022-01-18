@@ -61,12 +61,12 @@ function updateUI_movieDetail(movie_detail) {
 
 function getMovies(m) {
     return `<div class="col-md-2 my-3">
-                <div class="card bg-primary" style="height: 25rem;">
+                <div class="card bg-dark border-secondary" style="height: 25rem;">
                     <img src="${m.Poster}" class="card-img-top">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title" style="font-size: 0.8rem;"><strong>${m.Title}</strong></h5>
-                        <h6 class="card-subtitle mb-2 text-info" style="font-size: 0.8rem;">${m.Year}</h6>
-                        <a href="#" class="btn btn-dark show-detail mt-auto" data-id="${m.imdbID}" data-bs-toggle="modal" data-bs-target="#moviesModal" style="font-size: 0.8rem;">Show Details</a>
+                        <h6 class="card-subtitle mb-2 text-muted" style="font-size: 0.8rem;">${m.Year}</h6>
+                        <a href="#" class="btn btn-secondary show-detail mt-auto" data-id="${m.imdbID}" data-bs-toggle="modal" data-bs-target="#moviesModal" style="font-size: 0.8rem;">Show Details</a>
                     </div>
                 </div>
             </div>`;
@@ -84,14 +84,14 @@ function getMovieDetail(m) {
                     </div>
                     <div class="col-7">
                         <ul class="list-group">
-                            <li class="list-group-item list-group-item-dark"><strong>Year :</strong> ${m.Year}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Genre :</strong> ${m.Genre}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Director :</strong> ${m.Director}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Actors :</strong> ${m.Actors}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Language :</strong> ${m.Language}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Country :</strong> ${m.Country}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Rating :</strong> ${m.imdbRating}</li>
-                            <li class="list-group-item list-group-item-dark"><strong>Plot :</strong> <br>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Year :</strong> ${m.Year}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Genre :</strong> ${m.Genre}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Director :</strong> ${m.Director}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Actors :</strong> ${m.Actors}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Language :</strong> ${m.Language}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Country :</strong> ${m.Country}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Rating :</strong> ${m.imdbRating}</li>
+                            <li class="list-group-item bg-dark text-light border-secondary"><strong>Plot :</strong> <br>
                                 "${m.Plot}"
                             </li>
                         </ul>
