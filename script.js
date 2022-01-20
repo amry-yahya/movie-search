@@ -80,7 +80,7 @@ function getMovieDetail(m) {
             <div class="modal-body">
                 <div class="row">
                     <div class="col-5">
-                        <img src="${m.Poster}" alt="poster not found" class="img-fluid text-black">
+                        <img src="${m.Poster}" alt="poster not found" class="img-fluid text-light">
                     </div>
                     <div class="col-7">
                         <ul class="list-group">
