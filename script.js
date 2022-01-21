@@ -61,7 +61,7 @@ function updateUI_movieDetail(movie_detail) {
 
 function getMovies(m) {
     return `<div class="col-md-2 my-3">
-                <div class="card bg-dark border-secondary" style="height: 25rem;">
+                <div class="card bg-dark border-secondary">
                     <img src="${m.Poster}" class="card-img-top">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title" style="font-size: 0.8rem;"><strong>${m.Title}</strong></h5>
