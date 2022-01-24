@@ -31,21 +31,17 @@ async function findMovieDetail(element) {
     updateUI_movieDetail(movie_detail);
 }
 
-function fecthRequestMovies(keyword) {
-    return fetch('http://www.omdbapi.com/?apikey=dca61bcc&s=' + keyword)
-        .then(response => response.json())
-        .then(response => {
-            if (response.Response === 'False') {
-                throw new Error(response.Error);
-            }
-            return response.Search;
-        });
+async function fecthRequestMovies(keyword) {
+    const result = await fetch('http://www.omdbapi.com/?apikey=dca61bcc&s=' + keyword).then(response => response.json());
+    if (result.Response === 'False') {
+        throw new Error(result.Error);
+    }
+    return result.Search;
 }
 
-function fecthRequestDetail(movie_id) {
-    return fetch('http://www.omdbapi.com/?apikey=dca61bcc&i=' + movie_id)
+async function fecthRequestDetail(movie_id) {
+    return await fetch('http://www.omdbapi.com/?apikey=dca61bcc&i=' + movie_id)
         .then(response => response.json())
-        .then(response => response);
 }
 
 function updateUI_searchResult(search_result) {
